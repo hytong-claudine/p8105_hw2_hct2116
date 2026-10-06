@@ -1,0 +1,18 @@
+---
+title: "p8105_hw2_hct2116"
+author: "Haoyun Tong"
+date: "2026-10-06"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Problem 1
+
+#import
+```{r}
+nyc_transit = read.csv(file = "./hw2 data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv" )
+```
+
