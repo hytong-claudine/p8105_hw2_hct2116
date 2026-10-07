@@ -113,3 +113,5 @@ three_trash_wheels <- bind_rows(mr_tw, prof_tw, gwyd) %>%
 view (three_trash_wheels)
 ```
 
+### inline R observation
+The combined dataset contains `r nrow(three_trash_wheels)` dumpster observations from Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda. Each observation includes variables such as the wheel, dumpster number, collection date, weight, and numbers of the items collected (for example, cigarette butts and sports balls). Professor Trash Wheel collected `r three_trash_wheels %>% filter(wheel == "Professor Trash Wheel") %>% summarize(total = sum(weight_tons, na.rm = TRUE)) %>% pull(total)` tons of trash in total. Gwynnda collected `r three_trash_wheels %>% filter(wheel == "Gwynnda", month == "June", year == 2022) %>% summarize(total = sum(cigarette_butts, na.rm = TRUE)) %>% pull(total) %>% format(big.mark = ",", scientific = FALSE)` cigarette butts in June 2022.
