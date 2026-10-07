@@ -10,9 +10,9 @@ library (tidyverse)
 
 ```
 
-Problem 1
+## Problem 1
 
-#import, view, clean, convert
+### import, view, clean, convert
 ```{r}
 nyc_transit = read.csv(file = "./hw2 data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv" ) %>%
                 janitor::clean_names() %>% 
@@ -21,4 +21,29 @@ nyc_transit = read.csv(file = "./hw2 data/NYC_Transit_Subway_Entrance_And_Exit_D
                 mutate(entry = case_match(entry, "YES" ~ TRUE, "NO" ~ FALSE))
 view(nyc_transit)
 ```
+
+### a short paragraph about dataset and answers to questions
+The dataset records NYC subway entrance and exit locations, including the subway line and station name, coordinates, routes served, whether entry is allowed, whether vending is available, entrance type, and ADA compliance. I cleaned the column names first, selected the variables that are required by the assignment, and converted entry from "YES"/"NO" text to a logical variable. The resulting dataset has 19 total columns and 1868 rows. The data are tidy.
+
+```{r}
+nyc_transit %>%
+  distinct(line, station_name) %>%
+  nrow()
+```
+There are 465 distinct stations.
+
+```{r}
+nyc_transit %>%
+  filter(ada == TRUE) %>%
+  distinct(line, station_name) %>%
+  nrow()
+```
+There are 84 stations that are ADA compliant.
+
+```{r}
+nyc_transit %>%
+  filter(vending == "NO") %>%
+  summarize(proportion = mean(entry, na.rm = TRUE))
+```
+The propotion is 0.38.
 
