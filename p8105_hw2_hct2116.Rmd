@@ -7,7 +7,8 @@ output: github_document
 
 ```{r setup}
 library (tidyverse)
-
+library(readxl)
+library(dplyr)
 ```
 
 ## Problem 1
@@ -19,7 +20,7 @@ nyc_transit = read.csv(file = "./hw2 data/NYC_Transit_Subway_Entrance_And_Exit_D
                 select(line, station_name, station_latitude, station_longitude, starts_with("route"),
                        entry, vending, entrance_type, ada) %>% 
                 mutate(entry = case_match(entry, "YES" ~ TRUE, "NO" ~ FALSE))
-nyc_transit
+view (nyc_transit)
 ```
 
 ### a short paragraph about dataset and answers to questions
@@ -74,4 +75,41 @@ nyc_routes %>%
 ```
 There are 60 distinct stations serve the A train and 17 of them are ADA compliant.
 
+
+## Problem 2
+### import, read, clean (Mr. Trash Wheel)
+```{r}
+mr_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N743") %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster)) %>% 
+  mutate(sports_balls = as.integer(round(sports_balls)))
+mr_tw
+```
+
+### import, read, clean (Professor Trash Wheel)
+```{r}
+prof_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M140") %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster))
+prof_tw
+```
+
+### import, read, clean (Gwynnda)
+```{r}
+gwyd <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda the Good Wheel of the W", range = "A2:L395") %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster))
+gwyd
+```
+
+### combine
+```{r}
+mr_tw <- mr_tw %>% mutate(year = as.integer(year), wheel = "Mr. Trash Wheel")
+prof_tw <- prof_tw %>%  mutate(plastic_bottles = as.integer(plastic_bottles), wheel = "Professor Trash Wheel")
+gwyd <- gwyd %>%  mutate(wheel = "Gwynnda")
+
+three_trash_wheels <- bind_rows(mr_tw, prof_tw, gwyd) %>% 
+  relocate(wheel)
+view (three_trash_wheels)
+```
 
