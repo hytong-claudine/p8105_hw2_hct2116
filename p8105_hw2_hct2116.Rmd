@@ -5,14 +5,20 @@ date: "2026-10-06"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup}
+library (tidyverse)
+
 ```
 
 Problem 1
 
-#import
+#import, view, clean, convert
 ```{r}
-nyc_transit = read.csv(file = "./hw2 data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv" )
+nyc_transit = read.csv(file = "./hw2 data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv" ) %>%
+                janitor::clean_names() %>% 
+                select(line, station_name, station_latitude, station_longitude, starts_with("route"),
+                       entry, vending, entrance_type, ada) %>% 
+                mutate(entry = case_match(entry, "YES" ~ TRUE, "NO" ~ FALSE))
+view(nyc_transit)
 ```
 
