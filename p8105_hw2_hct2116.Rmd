@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r setup}
-library (tidyverse)
+library(tidyverse)
 library(readxl)
 library(dplyr)
 ```
@@ -46,7 +46,7 @@ nyc_transit %>%
   filter(vending == "NO") %>%
   summarize(proportion = mean(entry, na.rm = TRUE))
 ```
-The propotion is 0.38.
+The proportion is 0.38.
 
 ### reformat
 ```{r}
@@ -64,14 +64,13 @@ nyc_routes <- nyc_transit %>%
 a_stations <- nyc_routes %>%
   filter(route_name == "A") %>%
   distinct(line, station_name)
-
 nrow(a_stations)
 
 # ada compliant A train stations
 nyc_routes %>%
   filter(route_name == "A", ada == TRUE) %>%
   distinct(line, station_name) %>%
-  nrow()
+nrow()
 ```
 There are 60 distinct stations serve the A train and 17 of them are ADA compliant.
 
@@ -83,6 +82,7 @@ mr_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet 
   janitor::clean_names() %>% 
   filter(!is.na(dumpster)) %>% 
   mutate(sports_balls = as.integer(round(sports_balls)))
+view(mr_tw)
 ```
 
 ### import, read, clean (Professor Trash Wheel)
@@ -90,6 +90,7 @@ mr_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet 
 prof_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M140") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(dumpster))
+view(prof_tw)
 ```
 
 ### import, read, clean (Gwynnda)
@@ -97,6 +98,7 @@ prof_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", shee
 gwyd <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda the Good Wheel of the W", range = "A2:L395") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(dumpster))
+view(gwyd)
 ```
 
 ### combine
@@ -110,7 +112,7 @@ three_trash_wheels <- bind_rows(mr_tw, prof_tw, gwyd) %>%
 view (three_trash_wheels)
 ```
 
-### inline R observation
+### observation with inline R
 The combined dataset contains `r nrow(three_trash_wheels)` dumpster observations from Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda. Each observation includes variables such as the wheel, dumpster number, collection date, weight, and numbers of the items collected (for example, cigarette butts and sports balls). Professor Trash Wheel collected `r three_trash_wheels %>% filter(wheel == "Professor Trash Wheel") %>% summarize(total = sum(weight_tons, na.rm = TRUE)) %>% pull(total)` tons of trash in total. Gwynnda collected `r three_trash_wheels %>% filter(wheel == "Gwynnda", month == "June", year == 2022) %>% summarize(total = sum(cigarette_butts, na.rm = TRUE)) %>% pull(total) %>% format(big.mark = ",", scientific = FALSE)` cigarette butts in June 2022.
 
 ## Problem 3
@@ -127,6 +129,7 @@ baseline <- read_csv("./hw2 data/data_mci/MCI_baseline.csv",
 ```
 ### discussion, summary by inline R
 This dataset has a descriptive row before the actual column names, so `skip = 1` skips that row. I also used `na = "."` to treat missing MCI onset ages as missing values. After cleaning the column names, `sex` and `apoe4` are recorded as categories. Using `case_match` converts them into non-numeric variables. There were 483 participants recruited in the study, among them `r sum(!is.na(baseline$age_at_onset))` developed MCI during follow-up. The mean baseline age was `r mean(baseline$current_age) %>% signif(5)` years. Of the `r sum(baseline$sex == "Female")` women, `r sum(baseline$sex == "Female"&baseline$apoe4 == TRUE)` were APOE4 carriers, so the proportion was `r mean(baseline$apoe4[baseline$sex == "Female"])%>% signif(4)`.
+
 ### same for the dataset of longitudinally observed biomarker values
 ```{r}
 amyloid <- read_csv("./hw2 data/data_mci/mci_amyloid.csv", skip = 1) %>%
@@ -144,8 +147,6 @@ amyloid <- read_csv("./hw2 data/data_mci/mci_amyloid.csv", skip = 1) %>%
   )) %>% 
   relocate(visit_time_year, .before = amyloid_ratio) %>% 
   select(study_id, visit_time_year, amyloid_ratio)
-  
-view(amyloid)
 ```
 When importing this dataset, I also skipped the first row containing descriptions by `skip = 1`. After cleaning the names, I used pivot to transform the wide format into a long format, separating each `visit_time` into different rows. And then I created a new column called `visit_time_year` to store the time in numeric format (eg, baseline as 0, time_2 as 2). To have a clearer final view, I selected the three columns to display: `study_id`, `visit_time_year`, `amyloid_ratio`.
 
@@ -166,6 +167,6 @@ view (mci_combined)
 ```
 The inner join will retain the 475 participants present in both. The combined dataset contains only participants present in both the baseline and amyloid datasets. It has one row per participant per amyloid visit. Each row includes the study ID, visit time, amyloid 42/40 ratio, and the participant’s baseline demographic information.
 ```{r}
-write_csv(mci_combined, "./hw2 data/data_mci/mci_combined.csv")
+write_csv(mci_combined, "mci_combined.csv")
 ```
 
