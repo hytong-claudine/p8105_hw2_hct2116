@@ -148,5 +148,5 @@ amyloid <- read_csv("./hw2 data/data_mci/mci_amyloid.csv", skip = 1) %>%
 view(amyloid)
 
 ```
-
+When importing this dataset, I also skipped the first row containing descriptions by `skip = 1`. After cleaning the names, I used pivot to transform the wide format into a long format, separating each `visit_time` into different rows. And then I created a new column called `visit_time_year` to store the time in numeric format (eg, baseline as 0, time_2 as 2). To have a clearer final view, I selected the three columns to display: `study_id`, `visit_time_year`, `amyloid_ratio`.
 
