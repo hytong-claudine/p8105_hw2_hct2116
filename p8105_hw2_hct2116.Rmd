@@ -146,7 +146,26 @@ amyloid <- read_csv("./hw2 data/data_mci/mci_amyloid.csv", skip = 1) %>%
   select(study_id, visit_time_year, amyloid_ratio)
   
 view(amyloid)
-
 ```
 When importing this dataset, I also skipped the first row containing descriptions by `skip = 1`. After cleaning the names, I used pivot to transform the wide format into a long format, separating each `visit_time` into different rows. And then I created a new column called `visit_time_year` to store the time in numeric format (eg, baseline as 0, time_2 as 2). To have a clearer final view, I selected the three columns to display: `study_id`, `visit_time_year`, `amyloid_ratio`.
+
+### participant check, combine, describe, export
+```{r}
+only_baseline <- anti_join(baseline, amyloid, by = c("id" = "study_id"))
+nrow(only_baseline)
+```
+There are 8 baseline-only participants.
+```{r}
+only_amyloid <- anti_join(amyloid, baseline, by = c("study_id" = "id"))
+nrow(only_amyloid)
+```
+There are 60 amyloid-only participants. 
+```{r}
+mci_combined <- inner_join(amyloid, baseline, by = c("study_id" = "id"))
+view (mci_combined)
+```
+The inner join will retain the 475 participants present in both. The combined dataset contains only participants present in both the baseline and amyloid datasets. It has one row per participant per amyloid visit. Each row includes the study ID, visit time, amyloid 42/40 ratio, and the participant’s baseline demographic information.
+```{r}
+write_csv(mci_combined, "./hw2 data/data_mci/mci_combined.csv")
+```
 
