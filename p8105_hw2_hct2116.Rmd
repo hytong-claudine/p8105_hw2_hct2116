@@ -83,7 +83,6 @@ mr_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet 
   janitor::clean_names() %>% 
   filter(!is.na(dumpster)) %>% 
   mutate(sports_balls = as.integer(round(sports_balls)))
-mr_tw
 ```
 
 ### import, read, clean (Professor Trash Wheel)
@@ -91,7 +90,6 @@ mr_tw
 prof_tw <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M140") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(dumpster))
-prof_tw
 ```
 
 ### import, read, clean (Gwynnda)
@@ -99,7 +97,6 @@ prof_tw
 gwyd <- read_excel("./hw2 data/202610 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda the Good Wheel of the W", range = "A2:L395") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(dumpster))
-gwyd
 ```
 
 ### combine
@@ -122,8 +119,13 @@ The combined dataset contains `r nrow(three_trash_wheels)` dumpster observations
 baseline <- read_csv("./hw2 data/data_mci/MCI_baseline.csv",
                      skip = 1,
                      na = ".") %>% 
-            janitor::clean_names()
-baseline
+            janitor::clean_names() %>% 
+  mutate(
+    sex = case_match(sex, 1 ~ "Male", 0 ~ "Female"),
+    apoe4 = case_match(apoe4, 1 ~ TRUE, 0 ~ FALSE)
+  )
 ```
+### discussion, summary by inline R
+This dataset has a descriptive row before the actual column names, so `skip = 1` skips that row. I also used `na = "."` to treat missing MCI onset ages as missing values. After cleaning the column names, `sex` and `apoe4` are recorded as categories. Using `case_match` converts them into non-numeric variables. There were 483 participants recruited in the study, among them `r sum(!is.na(baseline$age_at_onset))` developed MCI during follow-up. The mean baseline age was `r mean(baseline$current_age) %>% signif(5)` years. Of the `r sum(baseline$sex == "Female")` women, `r sum(baseline$sex == "Female"&baseline$apoe4 == TRUE)` were APOE4 carriers, so the proportion was `r mean(baseline$apoe4[baseline$sex == "Female"])%>% signif(4)`.
 
 
