@@ -127,5 +127,26 @@ baseline <- read_csv("./hw2 data/data_mci/MCI_baseline.csv",
 ```
 ### discussion, summary by inline R
 This dataset has a descriptive row before the actual column names, so `skip = 1` skips that row. I also used `na = "."` to treat missing MCI onset ages as missing values. After cleaning the column names, `sex` and `apoe4` are recorded as categories. Using `case_match` converts them into non-numeric variables. There were 483 participants recruited in the study, among them `r sum(!is.na(baseline$age_at_onset))` developed MCI during follow-up. The mean baseline age was `r mean(baseline$current_age) %>% signif(5)` years. Of the `r sum(baseline$sex == "Female")` women, `r sum(baseline$sex == "Female"&baseline$apoe4 == TRUE)` were APOE4 carriers, so the proportion was `r mean(baseline$apoe4[baseline$sex == "Female"])%>% signif(4)`.
+### same for the dataset of longitudinally observed biomarker values
+```{r}
+amyloid <- read_csv("./hw2 data/data_mci/mci_amyloid.csv", skip = 1) %>%
+  janitor::clean_names() %>% 
+  pivot_longer(cols = baseline:time_8,
+               names_to = "visit_time",
+               values_to = "amyloid_ratio") %>% 
+  mutate(visit_time_year = case_match(
+    visit_time,
+    "baseline" ~ 0,
+    "time_2" ~ 2,
+    "time_4"~ 4,
+    "time_6"~ 6,
+    "time_8"~ 8
+  )) %>% 
+  relocate(visit_time_year, .before = amyloid_ratio) %>% 
+  select(study_id, visit_time_year, amyloid_ratio)
+  
+view(amyloid)
+
+```
 
 
